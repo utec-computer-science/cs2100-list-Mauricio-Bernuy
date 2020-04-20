@@ -66,37 +66,50 @@ class List {
 
 		  // Quita el ultimo elemento y retorna una referencia
         T& pop_back(void){
-            T val = tail->value;
-            Node<T> * pointer = head;
-            if (head != tail){
-                while( pointer->next != tail){ 
-                    pointer = pointer->nextNode;
+            if (head != nullptr){
+                T val = tail->value;
+                Node<T> * pointer = head;
+                if (head != tail){
+                    while( pointer->next != tail){ 
+                        pointer = pointer->nextNode;
+                    }
+                    delete tail;
+                    tail = pointer;
+                } else{
+                    delete head;
+                    head = nullptr;
+                    tail = nullptr
                 }
-                delete tail;
-                tail = pointer;
-            } else{
-                delete head;
-                head = nullptr;
-                tail = nullptr
+                return val;
             }
-            return val;
         }
 
   		  // Quita el primer elemento y retorna una referencia
         T& pop_front(void){
-            T val = head->value;
-            Node<T> * pointer = head->next;
-            head = head->next;
-            delete head;
-
-            return val;
+            if (head != nullptr){
+                T val = head->value;
+                Node<T> * pointer = head->next;
+                delete head;
+                head = pointer;
+                return val;
+            }
         };  
 
 		  // Acceso aleatorio
-        T& operator[] (const int&) = 0; 
+        T& operator[] (const int& position) {
+            if(head != nullptr){
+                Node<T> * pointer = head;
+                for (int i=0; i<position; i++){
+                    pointer = pointer->nextNode;
+                }
+                return pointer->value;
+            }
+        }; 
         
 		  // la lista esta vacia?
-        bool empty(void) = 0; 
+        bool empty(void){
+            return (head == nullptr);
+        }; 
 
 		  // retorna el tamaño de la lista
         unsigned int size(void) = 0; 
