@@ -112,10 +112,25 @@ class List {
         }; 
 
 		  // retorna el tamaño de la lista
-        unsigned int size(void) = 0; 
+        unsigned int size(void){
+            if (head != nullptr){
+                int size = 0;
+                Node<T> * pointer = head;
+                do{
+                    pointer = pointer->nextNode;
+                    size++;
+                }
+                while( pointer != tail);
+                return size;
+            }else{ return 0 };
+        } 
 
 		  // Elimina toda la lista
-        void clear(void) = 0; 
+        void clear(void){
+            while(head != nullptr){
+                this->pop_back();
+            }
+        }
 
 		  // Elimina un elemento en base a un puntero
         void erase(Node<T>*) = 0; 
