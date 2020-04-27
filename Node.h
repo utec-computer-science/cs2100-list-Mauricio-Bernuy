@@ -1,13 +1,26 @@
+
 template <typename T>
-class Node {
-    protected:
-        T value;
-        Node<T> * next;
-
+class ForwardListNode{
     public:
-        Node(void){
+        typedef T value_t;
+        value_t content;
+        ForwardListNode<T>* next;
+
+        ForwardListNode (const T& _content){
+            content = _content;
+            next = nullptr;
         }
 
-        ~Node(void){
+        ~ForwardListNode(void){
         }
+
+        value_t& operator*(void){
+            return content;
+        }
+
+        /*template <typename _T>
+        inline friend ostream& operator<< (ostream& _out, const ForwardListNode<_T>& _node){
+            _out << "Nodo: [v: " <<  _node.content << ", p: " << &_node << "]";
+            return _out;
+        }*/
 };

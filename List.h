@@ -3,54 +3,137 @@
 using namespace std;
 
 template <typename T>
-class List {
-    protected:
-        Node<T> *head;
-        Node<T> *tail;
+class Iterator{
+    public:
+        typedef T node_t;
+        typedef typename node_t::value_t value_t;
+
+    //protected:
+        node_t * pointer; 
 
     public:
-        List(List){ 
+        Iterator(node_t* _pointer = nullptr):pointer(_pointer){
+        }
+
+        ~Iterator(void){
+        }
+
+        virtual bool operator!= (Iterator it){
+            return pointer != it.pointer;
+        }
+
+        virtual value_t& operator* (void) {
+            return **pointer;
+        }
+};
+
+template <typename T>
+class ForwardList {
+    protected:
+        ForwardListNode<T> *head;
+        ForwardListNode<T> *tail;
+
+    public:
+        typedef ForwardListNode<T> node_t;
+
+        friend class ForwardIterator;
+        class ForwardIterator: public Iterator<node_t> {
+            public:
+                typedef typename Iterator<node_t>::node_t node_t;
+                typedef typename Iterator<node_t>::value_t value_t;
+
+            public: 
+                ForwardIterator (node_t* pointer = nullptr):Iterator<node_t>(pointer){
+                }
+
+                ~ForwardIterator (void){
+                }
+
+                ForwardIterator& operator++ (void){
+                    Iterator<node_t>::pointer = Iterator<node_t>::pointer->next; 
+                    return *this;
+                }
+
+        };
+
+        // constructors
+        ForwardIterator begin(){
+            return ForwardIterator(head);
+        }
+
+        ForwardIterator end(){
+            return ForwardIterator(nullptr);
+        }
+
+        ForwardList(const ForwardList<T>& l2){ 
+            head = nullptr;
+            tail = nullptr;
+            /*ForwardIterator it;
+            for(it = l2->begin(); it != l2->end(); ++it){ //fix this and constructors are done
+                push_back(*it);
+            }*/
+            node_t *l2node = l2.head;
+            while(l2node != nullptr){
+                push_back(l2node->content);
+                l2node = l2node->next;
+            }
+
+
 			// Constructor copia
         }
         
-        List(T*){ 
+        ForwardList(T* arr){ 
+            head = nullptr;
+            tail = nullptr;
+            for (int i=0; i<=sizeof(arr); i++){
+                push_back(arr[i]);
+            }
 			//Constructor  parametro, 
 			//llena una lista a partir de un array
         }
 
-        List(Node<T>*){ 
+        ForwardList(ForwardListNode<T> * node){
+            head = node;
+            tail = node;
 			//Constructor por parametro, 
 			//retorna una lista con un nodo
         }
-
-        List(int size){
-            random_device device;
-            mt19937 generator(device());
-            uniform_int_distribution<int> distribution(1,100);
+        
+        ForwardList(int size){
+            head = nullptr;
+            tail = nullptr;
+            random_device rd;
+            mt19937 rng(rd());
+            uniform_real_distribution<float> distribution(1,50);
             
-            for (i=0; i<size; i++){
-                push_back(distribution(generator));
+            for (int i=0; i<size; i++){
+                push_back(distribution(rng));
             }
 			//Constructor por parametro, 
 			//retorna un lista de randoms de tamaño n
         }
 
-        List(void){ 
+        ForwardList(void){ 
+            head = nullptr;
+            tail = nullptr;
 			//Constructor por defecto
         }
 
-        ~List(void){
+        // destructor
+        ~ForwardList(void){
+            clear();
         }
 
 		  // Retorna una referencia al primer elemento
-        T front(void){return head->value}; 
+        T& front(void){return head->content;}; 
         
 		  // Retorna una referencia al ultimo elemento
-		T back(void){return tail->value}; 
+		T& back(void){return tail->content;}; 
         
 		  // Inserta un elemento al final
         void push_back(const T& element){
-            Node<T> * new_node = new Node<T>{element, nullptr};
+            node_t *new_node = new node_t{element};
+            
             if (head != nullptr){
                 tail->next = new_node;
             } else{head = new_node;}
@@ -59,36 +142,39 @@ class List {
 
 		  // Inserta un elemento al inicio
         void push_front(const T& element) {
-            Node<T> * new_node = new Node<T>{element, head};
-            head = new_node;
+            node_t *new_node = new node_t{element};
+            
             if (tail == nullptr){tail = new_node;}
+            else{new_node->next = head;}
+            head = new_node;
         }
 
-		  // Quita el ultimo elemento y retorna una referencia
-        T& pop_back(void){
+		  // Quita el ultimo elemento
+        T pop_back(void){
             if (head != nullptr){
-                T val = tail->value;
-                Node<T> * pointer = head;
+                T val = tail->content;
+                node_t * pointer = head;
                 if (head != tail){
                     while( pointer->next != tail){ 
-                        pointer = pointer->nextNode;
+                        pointer = pointer->next;
                     }
                     delete tail;
                     tail = pointer;
+                    tail->next = nullptr;
                 } else{
                     delete head;
                     head = nullptr;
-                    tail = nullptr
+                    tail = nullptr;
                 }
                 return val;
             }
         }
 
-  		  // Quita el primer elemento y retorna una referencia
-        T& pop_front(void){
+  		  // Quita el primer elemento
+        T pop_front(void){
             if (head != nullptr){
-                T val = head->value;
-                Node<T> * pointer = head->next;
+                T val = head->content;
+                node_t * pointer = head->next;
                 delete head;
                 head = pointer;
                 return val;
@@ -97,12 +183,12 @@ class List {
 
 		  // Acceso aleatorio
         T& operator[] (const int& position) {
-            if(head != nullptr){
-                Node<T> * pointer = head;
+            if(head != nullptr && (position < size()) ){
+                node_t * pointer = head;
                 for (int i=0; i<position; i++){
-                    pointer = pointer->nextNode;
+                    pointer = pointer->next;
                 }
-                return pointer->value;
+                return pointer->content;
             }
         }; 
         
@@ -115,40 +201,91 @@ class List {
         unsigned int size(void){
             if (head != nullptr){
                 int size = 0;
-                Node<T> * pointer = head;
+                node_t * pointer = head;
                 do{
-                    pointer = pointer->nextNode;
+                    pointer = pointer->next;
                     size++;
                 }
-                while( pointer != tail);
+                while( pointer != nullptr);
                 return size;
-            }else{ return 0 };
+            }else{ return 0; };
         } 
 
 		  // Elimina toda la lista
         void clear(void){
-            while(head != nullptr){
-                this->pop_back();
+            while(!empty()){
+                pop_back();
             }
         }
 
 		  // Elimina un elemento en base a un puntero
-        void erase(Node<T>*) = 0; 
+        void erase(node_t* target){
+            if (head != nullptr){
+                node_t * prev = head;
+                while( prev->next != target && prev != target && prev != nullptr){ 
+                    prev = prev->next;
+                }
+                if(prev != nullptr){
+                    if (target==head) head = target->next;
+                    if (target==tail) tail = prev;
+                    prev->next = target->next;
+                    delete target;
+                }        
+            }
+        }
         
 		  // Inserta un elemento  en base a un puntero
-        void insert(Node<T>*, const T&) = 0; 
+        void insert(node_t* target, const T& element){ // i'll asume it's inserted after that pointer
+            if (head != nullptr){            
+                node_t *new_node = new node_t{element};
+                new_node->next = target->next;
+                target->next = new_node;
+            }   
+        }
 
 		  // Elimina todos los elementos por similitud
-        void remove(const T&) = 0; 
+        void remove(const T& element){
+            ForwardIterator it = begin();
+            while(it != end()){
+                auto tempit = it;
+                ++tempit;
+                if(*it == element) {
+                    erase(it.pointer);
+                }
+                it = tempit;
+            } 
+        } 
 
 		  // ordena la lista
-        List& sort(void) = 0; 
+        //ForwardList& sort(void) = 0; 
 
 		  // invierte la lista
-        List& reverse(void) = 0; 
+        ForwardList& reverse(void){
+            /*
+            ForwardIterator it = n->begin();
+            while(it != n->end()){
+                push_front(*it);
+                ++it;
+            }
+            //delete n;
+            */
+            int i = 0;
+            int j;
+            if (size()%2 == 0) j = size();
+            else
+
+        }
 
 		  // Imprime la lista con cout
         template<typename __T>
-        inline friend std::ostream& operator<<
-			(std::ostream& , const List<__T>& ); 
-}
+        inline friend std::ostream& operator<<(std::ostream &os , ForwardList<__T>& list){
+            ForwardIterator it = list.begin();
+            while(it != list.end()){
+                os << *it << " ";
+                ++it;
+            }
+            os<<endl;
+            return os;
+        }
+};
+
