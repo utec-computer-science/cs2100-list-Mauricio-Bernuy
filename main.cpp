@@ -40,8 +40,8 @@ int main(){
     list_t.push_back(8);
     std::cout<<list_t;
     std::cout<<list_t.pop_back()<<endl;
-
-    List<double_node_t> list1_t;
+    List<forward_node_t>::AnyIterator it;
+    /*List<double_node_t> list1_t;
     list1_t.push_back(3);
     list1_t.push_back(2);
     list1_t.push_back(1);
@@ -56,7 +56,8 @@ int main(){
     list2_t.push_back(2);
     list2_t.push_back(1);
     list2_t.push_back(6);
+    List<circular_node_t>::AnyIterator it;
     std::cout<<list2_t;
     std::cout<<list2_t.pop_back()<<endl;
-    cout<<"ok";
+    cout<<"ok";*/
 };

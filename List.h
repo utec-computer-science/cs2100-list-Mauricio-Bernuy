@@ -73,13 +73,26 @@ class List{
                 ~AnyIterator (void){
                 }
 
+                template<int nodeType>
+                void __it_plus__(Node**);
+
+                template<int nodeType>
+                void __it_minus__(Node**);
+
+                template<int nodeType>
+                void __it_not_equal__(Node**);
+
                 AnyIterator& operator++ (void){
-                    Iterator<node_t>::pointer = Iterator<node_t>::pointer->next; 
+                    __it_plus__<NodeTraits<Node,typename Node::value_t>::nodeType>
+                    (&(Iterator<node_t>::pointer));
                     return *this;
+                    /*Iterator<node_t>::pointer = Iterator<node_t>::pointer->next; 
+                    return *this;*/
                 }
 
                 AnyIterator& operator-- (void){
-                    Iterator<node_t>::pointer = Iterator<node_t>::pointer->prev; 
+                    __it_minus__<NodeTraits<Node,typename Node::value_t>::nodeType>
+                    (&(Iterator<node_t>::pointer));
                     return *this;
                 }
 
@@ -94,9 +107,8 @@ class List{
         template<int nodeType>
         List<Node>::value_t __remove__(Node**,Node**);
 
-        /*template<int nodeType>
-        std::ostream& __print__(AnyIterator*, AnyIterator*, 
-        std::ostream& );*/
+        //template<int nodeType>
+        //std::stringstream _print_(){}
 
     public:
         
@@ -199,7 +211,6 @@ class List{
 
     // Imprime la lista con cout
     friend std::ostream& operator<<(std::ostream &os, List<node_t> &list){
-
         
         for(auto i = list.begin(); i != list.end(); ++i){ // consider iterators for different node types (when next == head for circular)
             os<<*i.pointer<<" ";
@@ -208,12 +219,6 @@ class List{
         
         return os;
     }
-    /*
-    template<typename __Node>
-    inline friend std::ostream& operator<<(std::ostream &os , List<__Node> &list){
-        return __print__<NodeTraits<node_t,value_t>::nodeType>
-        (&(list.begin()), &(list.end()), os);
-    }*/
 };
 
 
@@ -230,10 +235,18 @@ class ListHelper{
     cout << "Hola no tengo trait definido" << endl;
 
   }
+  
   static void print(Node* head, Node* tail, ValueNode element){
     cout << "Hola no tengo trait definido" << endl;
 
-  } 
+  }
+  static void it_plus(Node **ptr){
+        cout << "no ++ available" << endl;
+    }
+    static void it_minus(Node **ptr){
+        cout << "no -- available" << endl;
+    }  
+      
 };
 
 template <typename Node, typename ValueNode>
@@ -270,18 +283,13 @@ class ListHelper<Node,ValueNode,FOWARD_NODE>{
         }
     };
 
-    /*static std::ostream print(typename List<Node>::AnyIterator* begin, 
-    typename List<Node>::AnyIterator* end, std::ostream& os){
-        auto it = begin;
-        //std::ostream& os;
-        while(it != end){
-                os << *it << " ";
-                ++it;
-        }
-        os<<endl;
-        return os;
-    };*/
+    static void it_plus(Node **ptr){
+        (*ptr) = (*ptr)->next;
+    } 
 
+    static void it_minus(Node **ptr){
+        cout << "no -- available" << endl;
+    }  
 };
 
 template <typename Node, typename ValueNode>
@@ -322,6 +330,13 @@ class ListHelper<Node,ValueNode,DOUBLE_NODE>{
                 return val;
         }
     };
+
+    static void it_plus(Node **ptr){
+        (*ptr) = (*ptr)->next;
+    } 
+    static void it_minus(Node **ptr){
+        (*ptr) = (*ptr)->prev;
+    }  
 };
 
 template <typename Node, typename ValueNode>
@@ -360,6 +375,15 @@ class ListHelper<Node,ValueNode,CIRCULAR_NODE>{
                 return val;
         }
     };
+
+    static void it_plus(Node **ptr){
+        (*ptr) = (*ptr)->next;
+    } 
+
+    static void it_minus(Node **ptr){
+        cout << "no -- available" << endl;
+    }  
+    
 };
 
 // list add trait call
@@ -379,6 +403,19 @@ typename List<Node>::value_t List<Node>::__remove__(
 
     ListHelper<List<Node>::node_t,List<Node>::value_t,nodeType>::remove(head,tail);
  
+}
+template< typename Node>  template <int nodeType>
+void List<Node>::AnyIterator::__it_plus__(
+    typename List<Node>::node_t** ptr){
+
+    ListHelper<List<Node>::node_t,List<Node>::value_t,nodeType>::it_plus(ptr);    
+}
+
+template< typename Node>  template <int nodeType>
+void List<Node>::AnyIterator::__it_minus__(
+    typename List<Node>::node_t** ptr){
+
+    ListHelper<List<Node>::node_t,List<Node>::value_t,nodeType>::it_minus(ptr);    
 }
 
 /*template< typename Node>  template <int nodeType>
