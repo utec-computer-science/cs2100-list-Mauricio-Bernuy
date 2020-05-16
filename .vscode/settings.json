@@ -36,6 +36,9 @@
         "xfacet": "cpp",
         "xlocinfo": "cpp",
         "xlocnum": "cpp",
-        "xtr1common": "cpp"
+        "xtr1common": "cpp",
+        "cctype": "cpp",
+        "sstream": "cpp",
+        "string": "cpp"
     }
 }

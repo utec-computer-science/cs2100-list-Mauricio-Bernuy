@@ -1,6 +1,7 @@
 #include "Node.h"
 #include <random>
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 template <typename Node>
@@ -107,8 +108,8 @@ class List{
         template<int nodeType>
         List<Node>::value_t __remove__(Node**,Node**);
 
-        //template<int nodeType>
-        //std::stringstream _print_(){}
+        template<int nodeType>
+        std::stringstream __print__(List<node_t>** list);
 
     public:
         
@@ -211,7 +212,7 @@ class List{
 
     // Imprime la lista con cout
     friend std::ostream& operator<<(std::ostream &os, List<node_t> &list){
-        
+        //os<<__print__<NodeTraits<node_t,value_t>::nodeType>(list);
         for(auto i = list.begin(); i != list.end(); ++i){ // consider iterators for different node types (when next == head for circular)
             os<<*i.pointer<<" ";
         }
@@ -231,15 +232,17 @@ class ListHelper{
     cout << "Hola no tengo trait definido" << endl;
 
   }
-  static void remove(Node** head, Node** tail, ValueNode element){
+  static ValueNode remove(Node** head, Node** tail){
     cout << "Hola no tengo trait definido" << endl;
 
   }
   
-  static void print(Node* head, Node* tail, ValueNode element){
-    cout << "Hola no tengo trait definido" << endl;
-
+  std::stringstream print(List<Node>** list){
+      std::stringstream ss;
+      ss<<"Hola no tengo trait definido"<<endl;
+    return ss;
   }
+
   static void it_plus(Node **ptr){
         cout << "no ++ available" << endl;
     }
@@ -282,6 +285,16 @@ class ListHelper<Node,ValueNode,FOWARD_NODE>{
                 return val;
         }
     };
+
+  std::stringstream print(List<Node>** list){
+      std::stringstream ss;
+
+      for(auto i = (*list).begin(); i != (*list).end(); ++i){ 
+          ss<<*i.pointer<<" ";
+        }
+        ss<<endl;
+        return ss;
+    } 
 
     static void it_plus(Node **ptr){
         (*ptr) = (*ptr)->next;
@@ -331,6 +344,16 @@ class ListHelper<Node,ValueNode,DOUBLE_NODE>{
         }
     };
 
+    std::stringstream print(List<Node>** list){
+      std::stringstream ss;
+
+      for(auto i = (*list).begin(); i != (*list).end(); ++i){ 
+          ss<<*i.pointer<<" ";
+        }
+        ss<<endl;
+        return ss;
+    }
+
     static void it_plus(Node **ptr){
         (*ptr) = (*ptr)->next;
     } 
@@ -376,6 +399,15 @@ class ListHelper<Node,ValueNode,CIRCULAR_NODE>{
         }
     };
 
+ std::stringstream print(List<Node>** list){
+      std::stringstream ss;
+
+      for(auto i = (*list).begin(); i != (*list).end(); ++i){ 
+          ss<<*i.pointer<<" ";
+        }
+        ss<<endl;
+        return ss;
+    } 
     static void it_plus(Node **ptr){
         (*ptr) = (*ptr)->next;
     } 
@@ -404,6 +436,14 @@ typename List<Node>::value_t List<Node>::__remove__(
     ListHelper<List<Node>::node_t,List<Node>::value_t,nodeType>::remove(head,tail);
  
 }
+
+template< typename Node>  template <int nodeType>
+std::stringstream List<Node>::__print__(
+    typename List<Node>** list){
+
+    ListHelper<List<Node>::node_t,List<Node>::value_t,nodeType>::print(list);
+}
+
 template< typename Node>  template <int nodeType>
 void List<Node>::AnyIterator::__it_plus__(
     typename List<Node>::node_t** ptr){
