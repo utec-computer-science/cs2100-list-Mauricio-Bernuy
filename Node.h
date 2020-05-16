@@ -85,7 +85,7 @@ class CircularListNode : public Node<T> {
         }
 
         template <typename _T>
-        inline friend std::ostream& operator<< (std::ostream& _out, const DoubleListNode<_T>& _node){
+        inline friend std::ostream& operator<< (std::ostream& _out, const CircularListNode<_T>& _node){
             _out << "Node: [content: " <<  _node.value << ", next: " << _node.next << ", head: " << _node.head << "]";
             return _out;
         }

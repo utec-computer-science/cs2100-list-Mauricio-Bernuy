@@ -32,23 +32,23 @@ int main(){
     typedef DoubleListNode<int> double_node_t;
     typedef CircularListNode<int> circular_node_t;
     
-    /*List<forward_node_t> list_t;
+    List<forward_node_t> list_t;
 
     list_t.push_back(2);
     list_t.push_back(5);
     list_t.push_back(7);
     list_t.push_back(8);
     std::cout<<list_t;
-    std::cout<<list_t.pop_back()<<endl;*/
+    std::cout<<list_t.pop_back()<<endl;
 
-    /*List<double_node_t> list1_t;
+    List<double_node_t> list1_t;
     list1_t.push_back(3);
     list1_t.push_back(2);
     list1_t.push_back(1);
     list1_t.push_back(6);
     std::cout<<list1_t;
     std::cout<<list1_t.pop_back()<<endl;
-    cout<<"ok";*/
+    cout<<"ok";
 
 
     List<circular_node_t> list2_t;

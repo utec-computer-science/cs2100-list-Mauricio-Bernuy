@@ -198,12 +198,14 @@ class List{
     };
 
     // Imprime la lista con cout
-    template<typename __Node>
-    inline friend std::ostream& operator<<(std::ostream &os, List<__Node> &list){
-        for(auto i = list.begin(); i != list.end(); ++i){  // consider iterators for different node types (when next == head for circular)
+    friend std::ostream& operator<<(std::ostream &os, List<node_t> &list){
+
+        
+        for(auto i = list.begin(); i != list.end(); ++i){ // consider iterators for different node types (when next == head for circular)
             os<<*i.pointer<<" ";
         }
         os<<endl;
+        
         return os;
     }
     /*
