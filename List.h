@@ -108,8 +108,8 @@ class List{
         template<int nodeType>
         List<Node>::value_t __remove__(Node**,Node**);
 
-        template<int nodeType>
-        std::stringstream __print__(List<node_t>** list);
+        /*template<int nodeType>
+        std::stringstream __print__(List<node_t>** list);*/
 
     public:
         
@@ -237,11 +237,11 @@ class ListHelper{
 
   }
   
-  std::stringstream print(List<Node>** list){
+  /*std::stringstream print(List<Node>** list){
       std::stringstream ss;
       ss<<"Hola no tengo trait definido"<<endl;
     return ss;
-  }
+  }*/
 
   static void it_plus(Node **ptr){
         cout << "no ++ available" << endl;
@@ -286,7 +286,7 @@ class ListHelper<Node,ValueNode,FOWARD_NODE>{
         }
     };
 
-  std::stringstream print(List<Node>** list){
+  /*std::stringstream print(List<Node>** list){
       std::stringstream ss;
 
       for(auto i = (*list).begin(); i != (*list).end(); ++i){ 
@@ -294,7 +294,7 @@ class ListHelper<Node,ValueNode,FOWARD_NODE>{
         }
         ss<<endl;
         return ss;
-    } 
+    } */
 
     static void it_plus(Node **ptr){
         (*ptr) = (*ptr)->next;
@@ -437,12 +437,12 @@ typename List<Node>::value_t List<Node>::__remove__(
  
 }
 
-template< typename Node>  template <int nodeType>
+/*template< typename Node>  template <int nodeType>
 std::stringstream List<Node>::__print__(
     typename List<Node>** list){
 
     ListHelper<List<Node>::node_t,List<Node>::value_t,nodeType>::print(list);
-}
+}*/
 
 template< typename Node>  template <int nodeType>
 void List<Node>::AnyIterator::__it_plus__(
